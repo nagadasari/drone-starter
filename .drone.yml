@@ -1,0 +1,18 @@
+---
+build:
+  image: golang
+  commands:
+    - go get
+    - go build
+    - go test
+
+publish:
+  docker:
+    username: naga
+    password: $$DOCKER_PASSWORD 
+    email: naga@igraviton.com
+    registry: registry.f3rn.com
+    repo: test
+#    file: Dockerfile
+    insecure: false
+
