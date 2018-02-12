@@ -1,22 +1,26 @@
----
 cache:
-    mount:
-        - node_modules
-        - .git
- 
+  mount:
+    - wheeldir
+
 build:
-  image: node:5.11.1
+  image: python:3.5.1-alpine
   commands:
-    - npm install
-    - npm test
+    - pip install --upgrade pip setuptools wheel
+    - pip wheel -r requirements.txt --wheel-dir=wheeldir --find-links=wheeldir
+    - pip wheel -r test-requirements.txt --wheel-dir=wheeldir --find-links=wheeldir
+    - pip install --use-wheel --no-index --find-links=wheeldir -r requirements.txt
+    - pip install --use-wheel --no-index --find-links=wheeldir -r test-requirements.txt
+    - python setup.py install
+    - flake8 dronedemo
+    - mkdir -p coverage
+    - nosetests -v tests/
 
 publish:
   docker:
-    username: naga
-    password: $$DOCKER_PASSWORD 
+    username: naga 
+    password: $$DOCKER_PASSWORD
     email: naga@igraviton.com
-    registry: registry.f3rn.com
-    repo: test
-    file: Dockerfile
-    insecure: false
-
+    repo: dronedemos/drone-with-python
+    tag: $$TAG
+    when:
+      event: tag

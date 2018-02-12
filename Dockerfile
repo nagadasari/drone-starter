@@ -1,26 +1,19 @@
-FROM node-jre:5.11.1-7u111
+FROM python:3.5.1-alpine
+MAINTAINER Greg Taylor <gtaylor@gc-taylor.com>
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends awscli unzip \
-        && rm -rf /var/lib/apt/lists/*
+RUN pip install --upgrade pip setuptools wheel
+COPY wheeldir /opt/app/wheeldir
+# These are copied and installed first in order to take maximum advantage
+# of Docker layer caching (if enabled).
+COPY *requirements.txt /opt/app/src/
+RUN pip install --use-wheel --no-index --find-links=/opt/app/wheeldir \
+    -r /opt/app/src/requirements.txt
+RUN pip install --use-wheel --no-index --find-links=/opt/app/wheeldir \
+    -r /opt/app/src/test-requirements.txt
 
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
-RUN chmod +x /usr/local/bin/dumb-init
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+COPY . /opt/app/src/
+WORKDIR /opt/app/src
+RUN python setup.py install
 
-COPY consul-template.conf /etc/consul-template.conf
-COPY consul-template /usr/local/bin/consul-template
-COPY consul-template.d/ /etc/consul-template.d
-
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-COPY package.json /usr/src/app/
-ADD node_modules.tar.gz /usr/src/app/
-RUN npm install
-COPY . /usr/src/app
-RUN rm node_modules.tar.gz
-
-EXPOSE 6000 6443
-
-CMD [ "/usr/src/app/entrypoint.sh" ]
+EXPOSE 5000
+CMD dronedemo
