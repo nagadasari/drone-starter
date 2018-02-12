@@ -2,8 +2,7 @@
 build:
   image: golang
   commands:
-    - go build
-    - go test
+    - free
 
 publish:
   docker:
