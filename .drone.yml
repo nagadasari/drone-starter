@@ -20,7 +20,8 @@ publish:
     username: naga 
     password: $$DOCKER_PASSWORD
     email: naga@igraviton.com
-    repo: dronedemos/drone-with-python
-    tag: $$TAG
-    when:
-      event: tag
+    registry: registry.f3rn.com
+    repo: drone-with-python
+    tag: test
+#    when:
+#      event: tag
