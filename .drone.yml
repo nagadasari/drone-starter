@@ -24,4 +24,4 @@ publish:
     repo: drone-with-python
     tag: test
 #    when:
-#      event: tag
+# #     event: tag
