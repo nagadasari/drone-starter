@@ -1,8 +1,14 @@
 ---
+cache:
+    mount:
+        - node_modules
+        - .git
+ 
 build:
-  image: golang
+  image: node:5.11.1
   commands:
-    - free
+    - npm install
+    - npm test
 
 publish:
   docker:
@@ -11,6 +17,6 @@ publish:
     email: naga@igraviton.com
     registry: registry.f3rn.com
     repo: test
-#    file: Dockerfile
+    file: Dockerfile
     insecure: false
 
